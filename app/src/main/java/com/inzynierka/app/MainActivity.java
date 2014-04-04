@@ -1,6 +1,8 @@
 package com.inzynierka.app;
 
 
+
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -18,12 +20,14 @@ import com.inzynierka.app.fragments.AlertFragment;
 
 public class MainActivity extends FragmentActivity {
 
-
+    private PendingIntent pendingIntent;
     boolean internet_connection = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
 
         Button lista = (Button)findViewById(R.id.button_lista);
@@ -34,7 +38,8 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
                 internet_connection = check_internet_connection();
-              if(internet_connection)
+
+                if(internet_connection)
                 {
                     Intent intent = new Intent(MainActivity.this, TrasyActivity.class);
                     startActivity(intent);
@@ -66,6 +71,7 @@ public class MainActivity extends FragmentActivity {
        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
        return networkInfo != null && networkInfo.isConnectedOrConnecting();
    }
+
 
 
 

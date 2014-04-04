@@ -1,11 +1,18 @@
 package com.inzynierka.app.activites;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +26,7 @@ import android.widget.Toast;
 import com.inzynierka.app.R;
 import com.inzynierka.app.fragments.ShowFragment;
 import com.inzynierka.app.gps.GPSLocation;
+import com.inzynierka.app.services.DataService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +36,7 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +50,7 @@ public class TrasyActivity extends FragmentActivity {
     private static final String https_url = "https://szr.szczecin.pl/utms/data/layers/VMSPublic";
 
     private GPSLocation gps;
-    protected  String brama_portowa_text;
+    private    String brama_portowa_text;
     protected  String eskadrowa_text;
     protected  String gdanska_txt;
     protected  String szosa_txt;
@@ -53,25 +62,45 @@ public class TrasyActivity extends FragmentActivity {
     private static double brama_longitude = 53.4249;
     private static double gdanska_longitude = 53.41528;
     private static double gdanska_latitude = 14.56944;
+    private float cos;
+    private PendingIntent pendingIntent;
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            String blah = intent.getStringExtra("brama");
+            Toast.makeText(getBaseContext(),"z" + blah,Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trasy);
+        Calendar cal = Calendar.getInstance();
+        Intent i = new Intent(this, DataService.class);
+        pendingIntent = PendingIntent.getService(this,0,i,0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),30*1000,pendingIntent);
+
 
         gps = new GPSLocation(TrasyActivity.this);
 
-        LocationCreator();
 
-
-        new GetData().execute();
-
+        cos = LocationCreator();
 
         final ListView listView = (ListView) findViewById(R.id.listView);
         ArrayAdapter<?> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.trasy));
         listView.setAdapter(adapter);
 
+        if(2000 < cos)
+        {
+           listView.setBackgroundColor(getResources().getColor(R.color.yellow));
+        }
+
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver,new IntentFilter("data"));
 
 
 
@@ -85,9 +114,10 @@ public class TrasyActivity extends FragmentActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString("position", s);
                 String tmp_brama = time_brama_portowa(brama_portowa_text);
-                czas_brama_portowa = parsing_brama_portowa(tmp_brama);
+               czas_brama_portowa = parsing_brama_portowa(tmp_brama);
+                view.setBackgroundColor(getResources().getColor(R.color.yellow));
 
-                bundle.putString("brama_portowa", brama_portowa_text);
+              bundle.putString("brama_portowa", brama_portowa_text);
                 bundle.putString("eskadrowa", eskadrowa_text);
                 bundle.putString("struga", struga_text);
                 bundle.putString("gdanska", gdanska_txt);
@@ -116,12 +146,52 @@ public class TrasyActivity extends FragmentActivity {
 
     }
 
-    public void LocationCreator() {
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver,new IntentFilter(DataService.NOTIFICATION_SERVICE));
+    }
+
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            eskadrowa_text = intent.getStringExtra("eskadrowa");
+            brama_portowa_text = intent.getStringExtra("brama");
+            gdanska_txt = intent.getStringExtra("gdanska");
+            struga_text = intent.getStringExtra("struga");
+            szosa_txt = intent.getStringExtra("szosa");
+        
+
+
+
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (messageReceiver !=null)
+        {
+            IntentFilter intentFilter = new IntentFilter("data");
+            registerReceiver(messageReceiver,intentFilter);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+    }
+
+    public float LocationCreator() {
 
 
         Location moja;
         double latitude;
         double longitude;
+        float distance = 0;
         if (gps.canGetLocation()) {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
@@ -137,19 +207,12 @@ public class TrasyActivity extends FragmentActivity {
             Location loc = new Location("point A");
             loc.setLatitude(brama_latitude);
             loc.setLongitude(brama_longitude);
-
-
-
-
-           float distance = loc.distanceTo(gdanska);
-           int i = Math.round(distance);
-            Log.d("appka", "z" + i);
-            if ( i > 2000)
-            {
-
-            }
+            distance = loc.distanceTo(gdanska);
+           int cos = Math.round(distance);
+            Log.d("appka", "z" + cos);
 
         }
+        return distance;
     }
 
 
@@ -230,7 +293,6 @@ public class TrasyActivity extends FragmentActivity {
 
     public int time_szosa_os_reda(String tmp) {
         tmp = tmp.substring(9, 12);
-        Log.d("appka", tmp);
         tmp = tmp.replaceAll("'", "");
         tmp = tmp.replaceAll(" ", "");
         tmp = tmp.trim();
@@ -269,9 +331,20 @@ public class TrasyActivity extends FragmentActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
 
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+    }
 
     public  class GetData extends AsyncTask<String,String,String>
     {
@@ -331,7 +404,10 @@ public class TrasyActivity extends FragmentActivity {
 
         }
 
-
+        @Override
+        protected void onPostExecute(String s) {
+            Toast.makeText(getBaseContext(),"Pobrano dane",Toast.LENGTH_SHORT).show();
+        }
 
         private void certificate_authentication() throws KeyManagementException, NoSuchAlgorithmException {
 

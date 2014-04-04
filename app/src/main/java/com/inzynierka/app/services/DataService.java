@@ -1,14 +1,11 @@
 package com.inzynierka.app.services;
 
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.inzynierka.app.activites.TrasyActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,55 +25,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-
 public class DataService extends Service {
 
-     final static String MY_ACTION = "MY_ACTION";
-
-        @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
-            // TODO Auto-generated method stub
-
-            MyThread myThread = new MyThread();
-            myThread.start();
-
-            return super.onStartCommand(intent, flags, startId);
-        }
-
-        public class MyThread extends Thread{
-
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                for(int i=0; i<10; i++){
-                    try {
-                        Thread.sleep(5000);
-                        Intent intent = new Intent();
-                        intent.setAction(MY_ACTION);
-                        sendBroadcast(intent);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-                stopSelf();
-            }
-
-        }
-
-
     private static final String https_url = "https://szr.szczecin.pl/utms/data/layers/VMSPublic";
-    private String brama_service,eskadrowa_service,gdanska_service,szosa_service,struga_service;
-    TrasyActivity trasyactivity;
-    @Override
-    public void onCreate() {
-        super.onCreate();
-      //   new GetData().execute(https_url);
+    protected String brama_service, eskadrowa_service, gdanska_service, szosa_service, struga_service;
 
-        Log.d("appka", "Start");
-        String yup = brama_service;
-        Log.d("appka","z"+yup);
-    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -84,8 +37,26 @@ public class DataService extends Service {
     }
 
 
-    public  class GetData extends AsyncTask<String,String,List<String>>
-    {
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        new GetData().execute();
+        return START_STICKY;
+
+
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
+
+    }
+
+
+    public class GetData extends AsyncTask<String, String, List<String>> {
 
         private String tmp_brama_portowa_text, tmp_eskadrowa_text, tmp_gdanska_txt, tmp_szosa_txt;
         private String tmp_struga_text;
@@ -125,20 +96,12 @@ public class DataService extends Service {
             lista.add(tmp_brama_portowa_text);
 
 
-            Log.d("a",tmp_brama_portowa_text);
-            brama_service = tmp_brama_portowa_text;
-            gdanska_service = tmp_gdanska_txt;
-            eskadrowa_service = tmp_eskadrowa_text;
-            struga_service = tmp_struga_text;
-            szosa_service = tmp_szosa_txt;
-            Log.d("b",brama_service);
-
-            return null;
+            return lista;
         }
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(getBaseContext(),"blah",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "Pobieram dane", Toast.LENGTH_SHORT).show();
         }
 
         public void preparing_data() {
@@ -153,20 +116,25 @@ public class DataService extends Service {
         @Override
         protected void onPostExecute(List<String> strings) {
 
+            eskadrowa_service = strings.get(0);
+            gdanska_service = strings.get(1);
+            szosa_service = strings.get(2);
+            struga_service = strings.get(3);
+            brama_service = strings.get(4);
+            Intent intent = new Intent("data");
+            intent.putExtra("eskadrowa",eskadrowa_service);
+            intent.putExtra("gdanska",gdanska_service);
+            intent.putExtra("szosa",szosa_service);
+            intent.putExtra("struga",struga_service);
+            intent.putExtra("brama",brama_service);
 
-            Bundle bundle = new Bundle();
-            bundle.putString("eskadrowa", strings.get(0));
-            bundle.putString("gdanska", strings.get(1));
-            bundle.putString("szosa", strings.get(2));
-            bundle.putString("struga", strings.get(3));
-            bundle.putString("brama", strings.get(4));
+            Toast.makeText(getBaseContext(), "Pobrano dane", Toast.LENGTH_SHORT).show();
+            sendBroadcast(intent);
+         //   Toast.makeText(getBaseContext(), brama_service, Toast.LENGTH_SHORT).show();
+
         }
 
-
-
         private void certificate_authentication() throws KeyManagementException, NoSuchAlgorithmException {
-
-
 
 
             SSLContext ctx = SSLContext.getInstance("TLS");
@@ -240,9 +208,6 @@ public class DataService extends Service {
         }
 
 
-
-
-
         public String trim_Brama(String tmp) {
             tmp = tmp.trim();
             return tmp.substring(7, 33);
@@ -255,13 +220,11 @@ public class DataService extends Service {
         }
 
 
-
         public String trim_struga(String tmp) {
             tmp = tmp.substring(27, 95);
 
             return tmp.replace("D�?UGI", "DŁUGI");
         }
-
 
 
         public String trim_gdanska(String tmp) {
@@ -271,7 +234,6 @@ public class DataService extends Service {
         }
 
 
-
         public String trim_szosa(String tmp) {
             tmp = tmp.substring(27, 95);
 
@@ -279,8 +241,10 @@ public class DataService extends Service {
         }
 
 
-
     }
 
 
 }
+
+
+
