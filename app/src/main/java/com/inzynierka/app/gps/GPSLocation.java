@@ -10,15 +10,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.inzynierka.app.R;
+
 /*
  * Created by Mateusz Czyszkiewicz.
  */
 public class GPSLocation extends Service implements LocationListener {
 
     private final Context context;
-
- //   private boolean isGPSenabled = false;
-  //  private boolean isINTERNETenabled = false;
     private boolean canGetLocation = false;
     private static final long MIN_DISTANCE = 10;
     private static final long MIN_TIME = 1000 * 60;
@@ -81,11 +80,8 @@ public class GPSLocation extends Service implements LocationListener {
             }
             else
             {
-                Toast.makeText(getBaseContext(),"nie ma polaczenia",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(),getString(R.string.brak_polaczenia),Toast.LENGTH_SHORT).show();
             }
-
-
-
 
         }catch (Exception e){e.getMessage();}
         return location;

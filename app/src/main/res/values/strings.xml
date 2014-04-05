@@ -15,6 +15,33 @@
     <string name="info_o_aplikacji"> UWAGA ! Ta aplikacja została stworzona na potrzeby pracy inżynierskiej. Nie jest to oficjalna aplikacja Zarządu Dróg i Transportu w Szczecinie. Dane wykorzystane w tym programie pochodzą z serwisu https://szr.szczecin.pl, które są ogólnodostepne. Nie zalecane jest używanie telefonu przez kierowcę w czasie prowadzenia auta</string>
     <string name="pobranie_danych">Pobieram dane, chwileczke</string>
     <string name="ukonczono_pobieranie">Pobrano dane</string>
+    <string name="eskadrowa_trasa">eskadrowa_trasa</string>
+    <string name="struga_os_reda">struga_os_reda</string>
+    <string name="struga_most_dlugi">struga_most_dlugi</string>
+    <string name="struga_trasa_zamkowa">struga_trasa_zamkowa</string>
+    <string name="time_brama_portowa">time_brama_portowa</string>
+    <string name="gdanska_most">gdanska_most</string>
+    <string name="szosa_reda">szosa_reda</string>
+    <string name="szosa_most">szosa_most</string>
+    <string name="szosa_trasa">szosa_trasa</string>
+    <string name="place">place</string>
+    <string name="position">position</string>
+    <string name="brama">brama</string>
+    <string name="eskadrowa">eskadrowa</string>
+    <string name="struga">struga</string>
+    <string name="gdanska">gdanska</string>
+    <string name="szosa">szosa</string>
+    <string name="eskadrowa_most">eskadrowa_most</string>
+    <string name="pattern">[^0-9]</string>
+    <string name="data">data</string>
+    <string name="pattern1"><![CDATA[<value>AUTOSTRADA A6]]></string>
+    <string name="pattern2"><![CDATA[<value>MOST D]]></string>
+    <string name="pattern3"><![CDATA[<value>Os. ]]></string>
+    <string name="Długi">DŁUGI</string>
+    <string name="dlugi">D�?UGI</string>
+    <string name="pobieram_dane">Pobieram dane</string>
+    <string name="pobrano_dane">Pobrano dane</string>
+    <string name="brak_polaczenia">nie ma polaczenia</string>
 
     <array name="trasy">
         <item>Brama Portowa</item>

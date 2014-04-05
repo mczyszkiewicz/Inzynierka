@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.inzynierka.app.R;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +30,7 @@ import javax.net.ssl.X509TrustManager;
 public class DataService extends Service {
 
     private static final String https_url = "https://szr.szczecin.pl/utms/data/layers/VMSPublic";
-    protected String brama_service, eskadrowa_service, gdanska_service, szosa_service, struga_service;
+
 
 
     @Override
@@ -37,23 +39,16 @@ public class DataService extends Service {
     }
 
 
-
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         new GetData().execute();
         return START_STICKY;
-
-
     }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
-
-    }
+        stopSelf();
+      }
 
 
     public class GetData extends AsyncTask<String, String, List<String>> {
@@ -101,7 +96,7 @@ public class DataService extends Service {
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(getBaseContext(), "Pobieram dane", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), getString(R.string.pobieram_dane), Toast.LENGTH_SHORT).show();
         }
 
         public void preparing_data() {
@@ -116,22 +111,15 @@ public class DataService extends Service {
         @Override
         protected void onPostExecute(List<String> strings) {
 
-            eskadrowa_service = strings.get(0);
-            gdanska_service = strings.get(1);
-            szosa_service = strings.get(2);
-            struga_service = strings.get(3);
-            brama_service = strings.get(4);
-            Intent intent = new Intent("data");
-            intent.putExtra("eskadrowa",eskadrowa_service);
-            intent.putExtra("gdanska",gdanska_service);
-            intent.putExtra("szosa",szosa_service);
-            intent.putExtra("struga",struga_service);
-            intent.putExtra("brama",brama_service);
+            Intent intent = new Intent(getString(R.string.data));
+            intent.putExtra(getString(R.string.eskadrowa),strings.get(0));
+            intent.putExtra(getString(R.string.gdanska),strings.get(1));
+            intent.putExtra(getString(R.string.szosa),strings.get(2));
+            intent.putExtra(getString(R.string.struga),strings.get(3));
+            intent.putExtra(getString(R.string.brama),strings.get(4));
 
-            Toast.makeText(getBaseContext(), "Pobrano dane", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), getString(R.string.pobrano_dane), Toast.LENGTH_SHORT).show();
             sendBroadcast(intent);
-         //   Toast.makeText(getBaseContext(), brama_service, Toast.LENGTH_SHORT).show();
-
         }
 
         private void certificate_authentication() throws KeyManagementException, NoSuchAlgorithmException {
@@ -162,15 +150,15 @@ public class DataService extends Service {
 
                 try {
 
-                    //
+
                     BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
                     String input;
                     int lines = 0;
 
-                    Pattern pattern = Pattern.compile("<value>AUTOSTRADA A6");
-                    Pattern pattern1 = Pattern.compile("<value>MOST D");
-                    Pattern pattern2 = Pattern.compile("<value>Os. ");
+                    Pattern pattern = Pattern.compile(getString(R.string.pattern1));
+                    Pattern pattern1 = Pattern.compile(getString(R.string.pattern2));
+                    Pattern pattern2 = Pattern.compile(getString(R.string.pattern3));
 
 
                     while ((input = br.readLine()) != null) {
@@ -216,28 +204,28 @@ public class DataService extends Service {
         public String trim_Eskadrowa(String tmp) {
             tmp = tmp.trim();
             tmp = tmp.substring(7, 40);
-            return tmp.replace("D�?UGI", "DŁUGI");
+            return tmp.replace(getString(R.string.dlugi), getString(R.string.Długi));
         }
 
 
         public String trim_struga(String tmp) {
             tmp = tmp.substring(27, 95);
 
-            return tmp.replace("D�?UGI", "DŁUGI");
+            return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }
 
 
         public String trim_gdanska(String tmp) {
             tmp = tmp.trim();
             tmp = tmp.substring(7, 40);
-            return tmp.replace("D�?UGI", "DŁUGI");
+            return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }
 
 
         public String trim_szosa(String tmp) {
             tmp = tmp.substring(27, 95);
 
-            return tmp.replace("D�?UGI", "DŁUGI");
+            return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }
 
 

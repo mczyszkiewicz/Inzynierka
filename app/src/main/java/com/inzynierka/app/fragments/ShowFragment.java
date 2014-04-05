@@ -16,23 +16,20 @@ public class ShowFragment extends DialogFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
         Bundle bundle = this.getArguments();
-        String position = bundle.getString("position");
-
-
-        int place = bundle.getInt("place");
+        String position = bundle.getString(getString(R.string.position));
+        int place = bundle.getInt(getString(R.string.place));
 
         getDialog().setTitle(position);
         View v = inflater.inflate(R.layout.showfragment,container,false);
        ImageView imageView = (ImageView) v.findViewById(R.id.imageViewfragment);
         TextView textView = (TextView)v.findViewById(R.id.textViewImage);
         switch(place) {
-            //brama portowa
+
             case 0:
 
-                String tekst_brama = bundle.getString("brama_portowa");
-                int czas = bundle.getInt("time_brama_portowa");
+                String tekst_brama = bundle.getString(getString(R.string.brama));
+                int czas = bundle.getInt(getString(R.string.time_brama_portowa));
 
 
                 textView.setText(tekst_brama);
@@ -47,13 +44,11 @@ public class ShowFragment extends DialogFragment{
                 }
                 break;
 
-            //gdanska
+
             case 1:
 
-                int czas_most_gdanska = bundle.getInt("gdanska_most");
-
-
-                textView.setText(bundle.getString("gdanska") + "'");
+                int czas_most_gdanska = bundle.getInt(getString(R.string.gdanska_most));
+                textView.setText(bundle.getString(getString(R.string.gdanska)) + "'");
 
                 if (czas_most_gdanska < 8) {
                     imageView.setImageResource(R.drawable.gdanska_zielona);
@@ -63,12 +58,10 @@ public class ShowFragment extends DialogFragment{
                     imageView.setImageResource(R.drawable.gdanskaczerwona);
                 }
                 break;
-            //eskadrowa
+
             case 2:
-                int czas_most = bundle.getInt("eskadrowa_most");
-
-
-                String tekst_eskadrowa = bundle.getString("eskadrowa");
+                int czas_most = bundle.getInt(getString(R.string.eskadrowa_most));
+                String tekst_eskadrowa = bundle.getString(getString(R.string.eskadrowa));
                 textView.setText(tekst_eskadrowa);
                 if (czas_most < 12) {
                     imageView.setImageResource(R.drawable.eskadrowa_zielona);
@@ -78,11 +71,11 @@ public class ShowFragment extends DialogFragment{
                     imageView.setImageResource(R.drawable.eskadrowaczerwona);
                 }
                 break;
-            //struga
-            case 3:
-                String tekst_struga = bundle.getString("struga");
 
-                int czas_most_dlugi = bundle.getInt("struga_most_dlugi");
+            case 3:
+                String tekst_struga = bundle.getString(getString(R.string.struga));
+
+                int czas_most_dlugi = bundle.getInt(getString(R.string.struga_most_dlugi));
                 textView.setText(tekst_struga);
 
                 if (czas_most_dlugi < 15) {
@@ -95,32 +88,22 @@ public class ShowFragment extends DialogFragment{
                 break;
             case 4:
 
-                int czas_red_szosa = bundle.getInt("szosa_reda");
-
-                int czas_most_dlugi_szosa = bundle.getInt("szosa_most");
-
-
-
-                textView.setText(bundle.getString("szosa") + "'");
-
-
+                int czas_red_szosa = bundle.getInt(getString(R.string.szosa_reda));
+                int czas_most_dlugi_szosa = bundle.getInt(getString(R.string.szosa_most));
+                textView.setText(bundle.getString(getString(R.string.szosa)) + "'");
                 if (czas_red_szosa > 20 && czas_red_szosa < 24 && czas_most_dlugi_szosa >= 23 && czas_most_dlugi_szosa < 25) {
                     imageView.setImageResource(R.drawable.szosastargardzkamoststrugazolte);
-                }  if (czas_red_szosa > 20 && czas_red_szosa < 25 && czas_most_dlugi_szosa <= 23) {
-                    imageView.setImageResource(R.drawable.szosastargardzkamoststrugazolte);
-                } else if (czas_red_szosa >= 25 && czas_most_dlugi_szosa >= 25) {
-                    //          imageView.setImageResource(R.drawable.szosastargadzkastrugamostczerwone);
                 } else if (czas_red_szosa >= 25 && czas_most_dlugi_szosa <= 20) {
                     imageView.setImageResource(R.drawable.szosastargardzkaczerwonastruga);
                 } else if (czas_red_szosa < 20 && czas_most_dlugi_szosa >= 25) {
                     imageView.setImageResource(R.drawable.szosastargardzkamostczerwony);
-                } else if (czas_red_szosa <= 20 && czas_most_dlugi_szosa < 20) {
+                } else if (czas_red_szosa <= 23 && czas_most_dlugi_szosa < 20) {
                     imageView.setImageResource(R.drawable.szosastargardzkazielone);
                 }
-                else if (czas_most_dlugi_szosa >= 20 && czas_red_szosa >= 20)
-                 {
+                else if (czas_most_dlugi_szosa >= 20 && czas_red_szosa >= 20) {
                     imageView.setImageResource(R.drawable.szosamostdlugizolty);
                  }
+
                 break;
 
         }
