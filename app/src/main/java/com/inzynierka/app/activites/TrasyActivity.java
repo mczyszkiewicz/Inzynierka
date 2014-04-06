@@ -66,11 +66,8 @@ public class TrasyActivity extends FragmentActivity {
         ArrayAdapter<?> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.trasy));
         listView.setAdapter(adapter);
 
-     /*   if(2000 < cos)
-        {
-           listView.setBackgroundColor(getResources().getColor(R.color.yellow));
-        }
-*/
+
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -81,10 +78,8 @@ public class TrasyActivity extends FragmentActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString(getString(R.string.position), s);
                 String tmp_brama = time_brama_portowa(brama_portowa_text);
-               czas_brama_portowa = parsing_brama_portowa(tmp_brama);
-                view.setBackgroundColor(getResources().getColor(R.color.yellow));
-
-              bundle.putString(getString(R.string.brama), brama_portowa_text);
+                czas_brama_portowa = parsing_brama_portowa(tmp_brama);
+                bundle.putString(getString(R.string.brama), brama_portowa_text);
                 bundle.putString(getString(R.string.eskadrowa), eskadrowa_text);
                 bundle.putString(getString(R.string.struga), struga_text);
                 bundle.putString(getString(R.string.gdanska), gdanska_txt);
@@ -116,11 +111,11 @@ public class TrasyActivity extends FragmentActivity {
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            eskadrowa_text = intent.getStringExtra("eskadrowa");
-            brama_portowa_text = intent.getStringExtra("brama");
-            gdanska_txt = intent.getStringExtra("gdanska");
-            struga_text = intent.getStringExtra("struga");
-            szosa_txt = intent.getStringExtra("szosa");
+            eskadrowa_text = intent.getStringExtra(getString(R.string.eskadrowa));
+            brama_portowa_text = intent.getStringExtra(getString(R.string.brama));
+            gdanska_txt = intent.getStringExtra(getString(R.string.gdanska));
+            struga_text = intent.getStringExtra(getString(R.string.struga));
+            szosa_txt = intent.getStringExtra(getString(R.string.szosa));
         }
     };
 
@@ -157,10 +152,11 @@ public class TrasyActivity extends FragmentActivity {
 
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         unregisterReceiver(messageReceiver);
         stopUsingService();
+
 
     }
 

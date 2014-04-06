@@ -19,8 +19,8 @@ public class GPSLocation extends Service implements LocationListener {
 
     private final Context context;
     private boolean canGetLocation = false;
-    private static final long MIN_DISTANCE = 10;
-    private static final long MIN_TIME = 1000 * 60;
+    private static final long MIN_DISTANCE = 1;
+    private static final long MIN_TIME = 5;
     private Location location;
     private double latitude;
     private double longitude;
