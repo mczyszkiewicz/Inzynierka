@@ -7,20 +7,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.inzynierka.app.R;
 import com.inzynierka.app.fragments.ShowFragment;
-import com.inzynierka.app.gps.GPSLocation;
 import com.inzynierka.app.services.DataService;
 
 import java.util.Calendar;
@@ -29,7 +25,7 @@ public class TrasyActivity extends FragmentActivity {
 
 
 
-    private GPSLocation gps;
+
     private String brama_portowa_text;
     private String eskadrowa_text;
     private String gdanska_txt;
@@ -39,11 +35,15 @@ public class TrasyActivity extends FragmentActivity {
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
 
-    private static double brama_latitude = 14.54829;
-    private static double brama_longitude = 53.4249;
-    private static double gdanska_longitude = 53.41528;
-    private static double gdanska_latitude = 14.56944;
-    private float cos;
+
+    //GPS-owe rzeczy
+   // private GPSLocation gps;
+   // private LocationManager locationManager;
+   // private static double brama_latitude = 14.54829;
+   // private static double brama_longitude = 53.4249;
+   // private static double gdanska_longitude = 53.41528;
+   // private static double gdanska_latitude = 14.56944;
+   // private float cos;
 
 
     @Override
@@ -55,8 +55,8 @@ public class TrasyActivity extends FragmentActivity {
         pendingIntent = PendingIntent.getService(this,0,i,0);
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),30*1000,pendingIntent);
-        gps = new GPSLocation(TrasyActivity.this);
-        cos = LocationCreator();
+     //   gps = new GPSLocation(TrasyActivity.this);
+     //   cos = LocationCreator();
         if (messageReceiver !=null)
         {
             IntentFilter intentFilter = new IntentFilter(getString(R.string.data));
@@ -65,7 +65,6 @@ public class TrasyActivity extends FragmentActivity {
         final ListView listView = (ListView) findViewById(R.id.listView);
         ArrayAdapter<?> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.trasy));
         listView.setAdapter(adapter);
-
 
 
 
@@ -118,37 +117,6 @@ public class TrasyActivity extends FragmentActivity {
             szosa_txt = intent.getStringExtra(getString(R.string.szosa));
         }
     };
-
-
-    public float LocationCreator() {
-
-
-        Location moja;
-        double latitude;
-        double longitude;
-        float distance = 0;
-        if (gps.canGetLocation()) {
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-            moja = new Location("moja");
-            moja.setLatitude(latitude);
-            moja.setLongitude(longitude);
-            Toast.makeText(getBaseContext(), "z" + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-
-            Location gdanska = new Location(getString(R.string.gdanska));
-            gdanska.setLatitude(gdanska_latitude);
-            gdanska.setLongitude(gdanska_longitude);
-
-            Location loc = new Location("point A");
-            loc.setLatitude(brama_latitude);
-            loc.setLongitude(brama_longitude);
-            distance = loc.distanceTo(gdanska);
-           int cos = Math.round(distance);
-            Log.d("appka", "z" + cos);
-
-        }
-        return distance;
-    }
 
 
     @Override
@@ -256,5 +224,37 @@ public class TrasyActivity extends FragmentActivity {
         return Integer.parseInt(tmp);
 
     }
+
+    /* GPS-owe rzeczy
+    public float LocationCreator() {
+
+        Location moja;
+        double latitude;
+        double longitude;
+        float distance = 0;
+        if (gps.canGetLocation()) {
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+            moja = new Location("moja");
+            moja.setLatitude(latitude);
+            moja.setLongitude(longitude);
+            Toast.makeText(getBaseContext(), "z" + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
+
+            Location gdanska = new Location(getString(R.string.gdanska));
+            gdanska.setLatitude(gdanska_latitude);
+            gdanska.setLongitude(gdanska_longitude);
+
+            Location loc = new Location("point A");
+            loc.setLatitude(brama_latitude);
+            loc.setLongitude(brama_longitude);
+            distance = loc.distanceTo(gdanska);
+           int cos = Math.round(distance);
+            Log.d("appka", "z" + cos);
+
+        }
+        return distance;
+    }
+*/
+
 
 }

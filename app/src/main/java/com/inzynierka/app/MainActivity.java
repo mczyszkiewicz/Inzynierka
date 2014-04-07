@@ -26,11 +26,10 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         Button lista = (Button)findViewById(R.id.button_lista);
         Button info = (Button)findViewById(R.id.button_info);
+
+
 
 
         lista.setOnClickListener(new View.OnClickListener() {
@@ -70,6 +69,7 @@ public class MainActivity extends FragmentActivity {
        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
        return networkInfo != null && networkInfo.isConnectedOrConnecting();
    }
+
 
 
 
