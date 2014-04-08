@@ -42,6 +42,15 @@
     <string name="pobieram_dane">Pobieram dane</string>
     <string name="pobrano_dane">Pobrano dane</string>
     <string name="brak_polaczenia">nie ma polaczenia</string>
+    <string name="MyLocation">MyLocation</string>
+    <string name="Location_update">LOCATION_UPDATE</string>
+    <string name="message">message</string>
+    <string name="tab_gdanska">Najblizsza tablica to gdanska</string>
+    <string name="none" />
+    <string name="tab_brama">najblizsza tablica to brama portowa</string>
+    <string name="tab_szosa">Najblizsza tablica to Szosa</string>
+    <string name="tab_eskadrowa">Najblizsza tablica to Eskadrowa</string>
+    <string name="tab_stuga">najblizsza tablica to Struga</string>
 
     <array name="trasy">
         <item>Brama Portowa</item>

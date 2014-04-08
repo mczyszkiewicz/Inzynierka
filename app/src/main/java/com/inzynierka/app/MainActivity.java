@@ -1,7 +1,6 @@
 package com.inzynierka.app;
 
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -21,33 +20,28 @@ public class MainActivity extends FragmentActivity {
 
 
     boolean internet_connection = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button lista = (Button)findViewById(R.id.button_lista);
-        Button info = (Button)findViewById(R.id.button_info);
-
-
-
+        Button lista = (Button) findViewById(R.id.button_lista);
+        Button info = (Button) findViewById(R.id.button_info);
 
         lista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 internet_connection = check_internet_connection();
 
-                if(internet_connection)
-                {
+                if (internet_connection) {
                     Intent intent = new Intent(MainActivity.this, TrasyActivity.class);
                     startActivity(intent);
+                } else {
+                    FragmentManager fm = getSupportFragmentManager();
+                    AlertFragment alertFragment = new AlertFragment();
+                    alertFragment.show(fm, "TAG");
                 }
-                else
-              {
-                  FragmentManager fm = getSupportFragmentManager();
-                  AlertFragment alertFragment = new AlertFragment();
-                  alertFragment.show(fm,"TAG");
-              }
             }
         });
 
@@ -61,18 +55,11 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-
-
-   private boolean check_internet_connection()
-   {
-       ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-       NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-       return networkInfo != null && networkInfo.isConnectedOrConnecting();
-   }
-
-
-
-
-
+    private boolean check_internet_connection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
 
 }
+

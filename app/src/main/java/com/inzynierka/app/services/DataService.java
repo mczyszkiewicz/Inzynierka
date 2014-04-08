@@ -3,11 +3,15 @@ package com.inzynierka.app.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.inzynierka.app.R;
+import com.inzynierka.app.gps.GPSLocation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +35,7 @@ public class DataService extends Service {
 
     private static final String https_url = "https://szr.szczecin.pl/utms/data/layers/VMSPublic";
 
-
+    GPSLocation gps = new GPSLocation(DataService.this);
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -42,24 +46,122 @@ public class DataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         new GetData().execute();
+        if(gps.canGetLocation()) {
+            LocationCreator(gps.getLatitude(), gps.getLongitude());
+        }
         return START_STICKY;
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         stopSelf();
-      }
+    }
 
+    public void LocationCreator(double Mylatitude, double Mylongitude) {
+
+        Location myLocation = new Location(getString(R.string.MyLocation));
+        myLocation.setLatitude(Mylatitude);
+        myLocation.setLongitude(Mylongitude);
+
+        Location brama = LocationBrama();
+        Location gdanska = LocationGdanska();
+        Location szosa = LocationSzosa();
+        Location eskadrowa = LocationEskadrowa();
+        Location struga = LocationStruga();
+
+        float distance_to_brama = myLocation.distanceTo(brama);
+        float distance_to_gdanska = myLocation.distanceTo(gdanska);
+        float distance_to_szosa = myLocation.distanceTo(szosa);
+        float distance_to_eskadrowa = myLocation.distanceTo(eskadrowa);
+        float distance_to_struga = myLocation.distanceTo(struga);
+
+        Intent i = new Intent(getString(R.string.Location_update));
+
+        if (distance_to_brama < 300)
+        {
+            i.putExtra(getString(R.string.message), getString(R.string.tab_brama));
+        }
+        else if(distance_to_gdanska < 300)
+        {
+            i.putExtra(getString(R.string.message), getString(R.string.tab_gdanska));
+        }
+        else if(distance_to_szosa < 300)
+        {
+            i.putExtra(getString(R.string.message), getString(R.string.tab_szosa));
+        }
+        else if(distance_to_eskadrowa < 300)
+        {
+            i.putExtra(getString(R.string.message),getString(R.string.tab_eskadrowa));
+        }
+        else if(distance_to_struga < 300)
+        {
+            i.putExtra(getString(R.string.message),getString(R.string.tab_stuga));
+        }
+
+            sendBroadcast(i);
+    }
+
+    public Location LocationBrama()
+    {
+        double brama_latitude = 14.54829;
+        double brama_longitude = 53.4249;
+        Location brama = new Location(getString(R.string.brama));
+        brama.setLongitude(brama_longitude);
+        brama.setLatitude(brama_latitude);
+
+        return brama;
+    }
+
+    public Location LocationGdanska()
+    {
+        double gdanska_longitude = 53.41528;
+        double gdanska_latitude = 14.56944;
+        Location gdanska = new Location(getString(R.string.gdanska));
+        gdanska.setLongitude(gdanska_longitude);
+        gdanska.setLatitude(gdanska_latitude);
+
+        return gdanska;
+    }
+    public Location LocationSzosa()
+    {
+        double szosa_longitude = 53.3726;
+        double szosa_latitude = 14.70708;
+        Location szosa = new Location(getString(R.string.szosa));
+        szosa.setLongitude(szosa_longitude);
+        szosa.setLatitude(szosa_latitude);
+
+        return szosa;
+    }
+
+    public Location LocationStruga()
+    {
+        double struga_longitude = 53.3845;
+        double struga_latitude = 14.65139;
+        Location struga = new Location(getString(R.string.struga));
+        struga.setLongitude(struga_longitude);
+        struga.setLatitude(struga_latitude);
+
+        return struga;
+    }
+
+    public Location LocationEskadrowa()
+    {
+        double eskadrowa_longitude = 53.3897;
+        double eskadrowa_latitude = 14.62139;
+        Location eskadrowa = new Location(getString(R.string.eskadrowa));
+        eskadrowa.setLongitude(eskadrowa_longitude);
+        eskadrowa.setLatitude(eskadrowa_latitude);
+
+        return eskadrowa;
+    }
 
     public class GetData extends AsyncTask<String, String, List<String>> {
 
         private String tmp_brama_portowa_text, tmp_eskadrowa_text, tmp_gdanska_txt, tmp_szosa_txt;
         private String tmp_struga_text;
-
-
         @Override
         protected List<String> doInBackground(String... strings) {
-
 
             List<String> lista = new ArrayList<String>();
             try {
@@ -83,13 +185,11 @@ public class DataService extends Service {
 
             preparing_data();
 
-
             lista.add(tmp_eskadrowa_text);
             lista.add(tmp_gdanska_txt);
             lista.add(tmp_szosa_txt);
             lista.add(tmp_struga_text);
             lista.add(tmp_brama_portowa_text);
-
 
             return lista;
         }
@@ -195,7 +295,6 @@ public class DataService extends Service {
             }
         }
 
-
         public String trim_Brama(String tmp) {
             tmp = tmp.trim();
             return tmp.substring(7, 33);
@@ -230,7 +329,6 @@ public class DataService extends Service {
 
 
     }
-
 
 }
 

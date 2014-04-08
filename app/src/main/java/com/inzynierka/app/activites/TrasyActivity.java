@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.inzynierka.app.R;
 import com.inzynierka.app.fragments.ShowFragment;
@@ -23,9 +24,6 @@ import java.util.Calendar;
 
 public class TrasyActivity extends FragmentActivity {
 
-
-
-
     private String brama_portowa_text;
     private String eskadrowa_text;
     private String gdanska_txt;
@@ -34,17 +32,7 @@ public class TrasyActivity extends FragmentActivity {
     private int czas_brama_portowa;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-
-
-    //GPS-owe rzeczy
-   // private GPSLocation gps;
-   // private LocationManager locationManager;
-   // private static double brama_latitude = 14.54829;
-   // private static double brama_longitude = 53.4249;
-   // private static double gdanska_longitude = 53.41528;
-   // private static double gdanska_latitude = 14.56944;
-   // private float cos;
-
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +43,20 @@ public class TrasyActivity extends FragmentActivity {
         pendingIntent = PendingIntent.getService(this,0,i,0);
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),30*1000,pendingIntent);
-     //   gps = new GPSLocation(TrasyActivity.this);
-     //   cos = LocationCreator();
         if (messageReceiver !=null)
         {
             IntentFilter intentFilter = new IntentFilter(getString(R.string.data));
             registerReceiver(messageReceiver,intentFilter);
         }
+        if(GPSReceiver !=null)
+        {
+            IntentFilter intentFilter1 = new IntentFilter(getString(R.string.Location_update));
+            registerReceiver(GPSReceiver,intentFilter1);
+        }
+        textView = (TextView)findViewById(R.id.textView);
         final ListView listView = (ListView) findViewById(R.id.listView);
         ArrayAdapter<?> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.trasy));
         listView.setAdapter(adapter);
-
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -90,18 +80,14 @@ public class TrasyActivity extends FragmentActivity {
                 bundle.putInt(getString(R.string.struga_trasa_zamkowa), time_struga_trasa_zamkowa(struga_text));
                 bundle.putInt(getString(R.string.time_brama_portowa), czas_brama_portowa);
                 bundle.putInt(getString(R.string.gdanska_most), time_gdanska_most(gdanska_txt));
-
                 bundle.putInt(getString(R.string.szosa_reda), time_szosa_os_reda(szosa_txt));
                 bundle.putInt(getString(R.string.szosa_most), time_szosa_most_dlugi(szosa_txt));
                 bundle.putInt(getString(R.string.szosa_trasa), time_szosa_trasa_zamkowa(szosa_txt));
-
                 bundle.putInt(getString(R.string.place), p);
                 FragmentManager fm = getSupportFragmentManager();
                 ShowFragment showFragment = new ShowFragment();
                 showFragment.setArguments(bundle);
                 showFragment.show(fm,"yup");
-
-
             }
         });
 
@@ -118,14 +104,20 @@ public class TrasyActivity extends FragmentActivity {
         }
     };
 
+    private BroadcastReceiver GPSReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+           textView.setText(intent.getStringExtra(getString(R.string.message)));
+        }
+    };
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(messageReceiver);
+        unregisterReceiver(GPSReceiver);
         stopUsingService();
-
-
     }
 
     private void stopUsingService()
@@ -135,12 +127,9 @@ public class TrasyActivity extends FragmentActivity {
         stopService(intent);
     }
 
-
-
     public int time_eskadrowa_most(String tmp) {
         tmp = tmp.substring(11, 13);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
 
     }
@@ -149,16 +138,12 @@ public class TrasyActivity extends FragmentActivity {
 
         tmp = tmp.substring(29, 31);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
-
-
     }
 
     public int time_os_reda(String tmp) {
         tmp = tmp.substring(9, 11);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
 
     }
@@ -166,7 +151,6 @@ public class TrasyActivity extends FragmentActivity {
     public int time_struga_most_dlugi(String tmp) {
         tmp = tmp.substring(63, 66);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
 
     }
@@ -174,14 +158,12 @@ public class TrasyActivity extends FragmentActivity {
     public int time_struga_trasa_zamkowa(String tmp) {
         tmp = tmp.substring(32, 35);
         tmp = tmp.replaceAll(getString(R.string.pattern), "");
-
         return Integer.parseInt(tmp);
 
     }
     public int time_gdanska_most(String tmp) {
         tmp = tmp.substring(10, 14);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
 
     }
@@ -190,9 +172,7 @@ public class TrasyActivity extends FragmentActivity {
     public int time_szosa_os_reda(String tmp) {
         tmp = tmp.substring(9, 12);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         tmp = tmp.trim();
-
         return Integer.parseInt(tmp);
 
     }
@@ -200,7 +180,6 @@ public class TrasyActivity extends FragmentActivity {
     public int time_szosa_most_dlugi(String tmp) {
         tmp = tmp.substring(63, 67);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
 
     }
@@ -208,7 +187,6 @@ public class TrasyActivity extends FragmentActivity {
     public int time_szosa_trasa_zamkowa(String tmp) {
         tmp = tmp.substring(32, 35);
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
     }
     public String time_brama_portowa(String tmp) {
@@ -220,41 +198,8 @@ public class TrasyActivity extends FragmentActivity {
     public int parsing_brama_portowa(String tmp) {
 
         tmp = tmp.replaceAll((getString(R.string.pattern)), "");
-
         return Integer.parseInt(tmp);
 
     }
-
-    /* GPS-owe rzeczy
-    public float LocationCreator() {
-
-        Location moja;
-        double latitude;
-        double longitude;
-        float distance = 0;
-        if (gps.canGetLocation()) {
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-            moja = new Location("moja");
-            moja.setLatitude(latitude);
-            moja.setLongitude(longitude);
-            Toast.makeText(getBaseContext(), "z" + latitude + " " + longitude, Toast.LENGTH_SHORT).show();
-
-            Location gdanska = new Location(getString(R.string.gdanska));
-            gdanska.setLatitude(gdanska_latitude);
-            gdanska.setLongitude(gdanska_longitude);
-
-            Location loc = new Location("point A");
-            loc.setLatitude(brama_latitude);
-            loc.setLongitude(brama_longitude);
-            distance = loc.distanceTo(gdanska);
-           int cos = Math.round(distance);
-            Log.d("appka", "z" + cos);
-
-        }
-        return distance;
-    }
-*/
-
 
 }
