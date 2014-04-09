@@ -34,6 +34,16 @@ import javax.net.ssl.X509TrustManager;
 public class DataService extends Service {
 
     private static final String https_url = "https://szr.szczecin.pl/utms/data/layers/VMSPublic";
+    private static final double brama_latitude = 14.54829;
+    private static final double brama_longitude = 53.4249;
+    private static final double gdanska_longitude = 53.41528;
+    private static final double gdanska_latitude = 14.56944;
+    private static final double szosa_longitude = 53.3726;
+    private static final double szosa_latitude = 14.70708;
+    private static final double struga_longitude = 53.3845;
+    private static final double struga_latitude = 14.65139;
+    private static final double eskadrowa_longitude = 53.3897;
+    private static final double eskadrowa_latitude = 14.62139;
 
     GPSLocation gps = new GPSLocation(DataService.this);
 
@@ -46,7 +56,7 @@ public class DataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         new GetData().execute();
-        if(gps.canGetLocation()) {
+        if (gps.canGetLocation()) {
             LocationCreator(gps.getLatitude(), gps.getLongitude());
         }
         return START_STICKY;
@@ -64,11 +74,11 @@ public class DataService extends Service {
         myLocation.setLatitude(Mylatitude);
         myLocation.setLongitude(Mylongitude);
 
-        Location brama = LocationBrama();
-        Location gdanska = LocationGdanska();
-        Location szosa = LocationSzosa();
-        Location eskadrowa = LocationEskadrowa();
-        Location struga = LocationStruga();
+        Location brama = CreateLocation(brama_latitude, brama_longitude, getString(R.string.brama));
+        Location gdanska = CreateLocation(gdanska_latitude, gdanska_longitude, getString(R.string.gdanska));
+        Location szosa = CreateLocation(szosa_latitude, szosa_longitude, getString(R.string.szosa));
+        Location eskadrowa = CreateLocation(eskadrowa_latitude, eskadrowa_longitude, getString(R.string.eskadrowa));
+        Location struga = CreateLocation(struga_latitude, struga_longitude, getString(R.string.struga));
 
         float distance_to_brama = myLocation.distanceTo(brama);
         float distance_to_gdanska = myLocation.distanceTo(gdanska);
@@ -78,82 +88,28 @@ public class DataService extends Service {
 
         Intent i = new Intent(getString(R.string.Location_update));
 
-        if (distance_to_brama < 300)
-        {
+        if (distance_to_brama < 300) {
             i.putExtra(getString(R.string.message), getString(R.string.tab_brama));
-        }
-        else if(distance_to_gdanska < 300)
-        {
+        } else if (distance_to_gdanska < 300) {
             i.putExtra(getString(R.string.message), getString(R.string.tab_gdanska));
-        }
-        else if(distance_to_szosa < 300)
-        {
+        } else if (distance_to_szosa < 300) {
             i.putExtra(getString(R.string.message), getString(R.string.tab_szosa));
-        }
-        else if(distance_to_eskadrowa < 300)
-        {
-            i.putExtra(getString(R.string.message),getString(R.string.tab_eskadrowa));
-        }
-        else if(distance_to_struga < 300)
-        {
-            i.putExtra(getString(R.string.message),getString(R.string.tab_stuga));
+        } else if (distance_to_eskadrowa < 300) {
+            i.putExtra(getString(R.string.message), getString(R.string.tab_eskadrowa));
+        } else if (distance_to_struga < 300) {
+            i.putExtra(getString(R.string.message), getString(R.string.tab_stuga));
         }
 
-            sendBroadcast(i);
+        sendBroadcast(i);
     }
 
-    public Location LocationBrama()
-    {
-        double brama_latitude = 14.54829;
-        double brama_longitude = 53.4249;
-        Location brama = new Location(getString(R.string.brama));
-        brama.setLongitude(brama_longitude);
-        brama.setLatitude(brama_latitude);
+    public Location CreateLocation(double latitude, double longitude, String name) {
 
-        return brama;
-    }
+        Location loc = new Location(name);
+        loc.setLongitude(longitude);
+        loc.setLatitude(latitude);
 
-    public Location LocationGdanska()
-    {
-        double gdanska_longitude = 53.41528;
-        double gdanska_latitude = 14.56944;
-        Location gdanska = new Location(getString(R.string.gdanska));
-        gdanska.setLongitude(gdanska_longitude);
-        gdanska.setLatitude(gdanska_latitude);
-
-        return gdanska;
-    }
-    public Location LocationSzosa()
-    {
-        double szosa_longitude = 53.3726;
-        double szosa_latitude = 14.70708;
-        Location szosa = new Location(getString(R.string.szosa));
-        szosa.setLongitude(szosa_longitude);
-        szosa.setLatitude(szosa_latitude);
-
-        return szosa;
-    }
-
-    public Location LocationStruga()
-    {
-        double struga_longitude = 53.3845;
-        double struga_latitude = 14.65139;
-        Location struga = new Location(getString(R.string.struga));
-        struga.setLongitude(struga_longitude);
-        struga.setLatitude(struga_latitude);
-
-        return struga;
-    }
-
-    public Location LocationEskadrowa()
-    {
-        double eskadrowa_longitude = 53.3897;
-        double eskadrowa_latitude = 14.62139;
-        Location eskadrowa = new Location(getString(R.string.eskadrowa));
-        eskadrowa.setLongitude(eskadrowa_longitude);
-        eskadrowa.setLatitude(eskadrowa_latitude);
-
-        return eskadrowa;
+        return loc;
     }
 
     public class GetData extends AsyncTask<String, String, List<String>> {
