@@ -56,9 +56,6 @@ public class DataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         new GetData().execute();
-        if (gps.canGetLocation()) {
-            LocationCreator(gps.getLatitude(), gps.getLongitude());
-        }
         return START_STICKY;
     }
 
@@ -237,7 +234,7 @@ public class DataService extends Service {
                         if (lines == 79) {
                             tmp_szosa_txt = input;
                         }
-                        if (lines == 196) {
+                        if (lines == 197) {
                             tmp_gdanska_txt = input;
                         }
 
@@ -272,6 +269,7 @@ public class DataService extends Service {
 
         public String trim_gdanska(String tmp) {
             tmp = tmp.trim();
+            Log.d("trim",tmp);
             tmp = tmp.substring(7, 40);
             return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }
