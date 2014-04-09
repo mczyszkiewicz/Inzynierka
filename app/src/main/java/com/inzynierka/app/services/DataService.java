@@ -96,7 +96,10 @@ public class DataService extends Service {
         } else if (distance_to_struga < 300) {
             i.putExtra(getString(R.string.message), getString(R.string.tab_stuga));
         }
-
+        else
+        {
+            i.putExtra(getString(R.string.message),getString(R.string.none));
+        }
         sendBroadcast(i);
     }
 
