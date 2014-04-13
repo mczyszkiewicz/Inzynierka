@@ -37,7 +37,7 @@ public class GPSLocation extends Service implements LocationListener {
 
             boolean isGPSenabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean isINTERNETenabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            if (isGPSenabled && isINTERNETenabled) {
+            if (!isGPSenabled && !isINTERNETenabled) {
                 this.canGetLocation = true;
                 {
                     if (isINTERNETenabled) {
@@ -109,6 +109,7 @@ public class GPSLocation extends Service implements LocationListener {
     @Override
     public void onProviderEnabled(String s) {
 
+        Toast.makeText(context,"jest gps",Toast.LENGTH_SHORT).show();
           }
 
     @Override

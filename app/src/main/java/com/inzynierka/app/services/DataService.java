@@ -4,9 +4,9 @@ package com.inzynierka.app.services;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,9 +44,17 @@ public class DataService extends Service {
     private static final double struga_latitude = 14.65139;
     private static final double eskadrowa_longitude = 53.3897;
     private static final double eskadrowa_latitude = 14.62139;
+    private static boolean first = false;
+    GPSLocation gps;
 
-    GPSLocation gps = new GPSLocation(DataService.this);
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        gps = new GPSLocation(DataService.this);
+    }
 
+
+    LocationManager locationManager;
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -56,6 +64,7 @@ public class DataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         new GetData().execute();
+        LocationCreator(gps.getLatitude(),gps.getLongitude());
         return START_STICKY;
     }
 
@@ -67,41 +76,41 @@ public class DataService extends Service {
 
     public void LocationCreator(double Mylatitude, double Mylongitude) {
 
-        Location myLocation = new Location(getString(R.string.MyLocation));
-        myLocation.setLatitude(Mylatitude);
-        myLocation.setLongitude(Mylongitude);
 
-        Location brama = CreateLocation(brama_latitude, brama_longitude, getString(R.string.brama));
-        Location gdanska = CreateLocation(gdanska_latitude, gdanska_longitude, getString(R.string.gdanska));
-        Location szosa = CreateLocation(szosa_latitude, szosa_longitude, getString(R.string.szosa));
-        Location eskadrowa = CreateLocation(eskadrowa_latitude, eskadrowa_longitude, getString(R.string.eskadrowa));
-        Location struga = CreateLocation(struga_latitude, struga_longitude, getString(R.string.struga));
+            Location myLocation = new Location(getString(R.string.MyLocation));
+            myLocation.setLatitude(Mylatitude);
+            myLocation.setLongitude(Mylongitude);
 
-        float distance_to_brama = myLocation.distanceTo(brama);
-        float distance_to_gdanska = myLocation.distanceTo(gdanska);
-        float distance_to_szosa = myLocation.distanceTo(szosa);
-        float distance_to_eskadrowa = myLocation.distanceTo(eskadrowa);
-        float distance_to_struga = myLocation.distanceTo(struga);
+            Location brama = CreateLocation(brama_latitude, brama_longitude, getString(R.string.brama));
+            Location gdanska = CreateLocation(gdanska_latitude, gdanska_longitude, getString(R.string.gdanska));
+            Location szosa = CreateLocation(szosa_latitude, szosa_longitude, getString(R.string.szosa));
+            Location eskadrowa = CreateLocation(eskadrowa_latitude, eskadrowa_longitude, getString(R.string.eskadrowa));
+            Location struga = CreateLocation(struga_latitude, struga_longitude, getString(R.string.struga));
 
-        Intent i = new Intent(getString(R.string.Location_update));
+            float distance_to_brama =  myLocation.distanceTo(brama);
+            float distance_to_gdanska = myLocation.distanceTo(gdanska);
+            float distance_to_szosa =  myLocation.distanceTo(szosa);
+            float distance_to_eskadrowa = myLocation.distanceTo(eskadrowa);
+            float distance_to_struga = myLocation.distanceTo(struga);
 
-        if (distance_to_brama < 300) {
-            i.putExtra(getString(R.string.message), getString(R.string.tab_brama));
-        } else if (distance_to_gdanska < 300) {
-            i.putExtra(getString(R.string.message), getString(R.string.tab_gdanska));
-        } else if (distance_to_szosa < 300) {
-            i.putExtra(getString(R.string.message), getString(R.string.tab_szosa));
-        } else if (distance_to_eskadrowa < 300) {
-            i.putExtra(getString(R.string.message), getString(R.string.tab_eskadrowa));
-        } else if (distance_to_struga < 300) {
-            i.putExtra(getString(R.string.message), getString(R.string.tab_stuga));
+            Intent i = new Intent(getString(R.string.Location_update));
+
+            if (distance_to_brama < 300) {
+                i.putExtra(getString(R.string.message), getString(R.string.tab_brama));
+            } else if (distance_to_gdanska < 300) {
+                i.putExtra(getString(R.string.message), getString(R.string.tab_gdanska));
+            } else if (distance_to_szosa < 300) {
+                i.putExtra(getString(R.string.message), getString(R.string.tab_szosa));
+            } else if (distance_to_eskadrowa < 300) {
+                i.putExtra(getString(R.string.message), getString(R.string.tab_eskadrowa));
+            } else if (distance_to_struga < 300) {
+                i.putExtra(getString(R.string.message), getString(R.string.tab_stuga));
+            } else {
+                i.putExtra(getString(R.string.message), getString(R.string.none));
+            }
+            sendBroadcast(i);
         }
-        else
-        {
-            i.putExtra(getString(R.string.message),getString(R.string.none));
-        }
-        sendBroadcast(i);
-    }
+
 
     public Location CreateLocation(double latitude, double longitude, String name) {
 
@@ -152,7 +161,10 @@ public class DataService extends Service {
 
         @Override
         protected void onPreExecute() {
-            Toast.makeText(getBaseContext(), getString(R.string.pobieram_dane), Toast.LENGTH_SHORT).show();
+            if(!first) {
+                Toast.makeText(getBaseContext(), getString(R.string.pobieram_dane), Toast.LENGTH_SHORT).show();
+
+            }
         }
 
         public void preparing_data() {
@@ -174,7 +186,12 @@ public class DataService extends Service {
             intent.putExtra(getString(R.string.struga),strings.get(3));
             intent.putExtra(getString(R.string.brama),strings.get(4));
 
-            Toast.makeText(getBaseContext(), getString(R.string.pobrano_dane), Toast.LENGTH_SHORT).show();
+            if(!first) {
+                Toast.makeText(getBaseContext(), getString(R.string.pobrano_dane), Toast.LENGTH_SHORT).show();
+                first = true;
+                intent.putExtra("check",true);
+                      }
+            Log.d("appka","appka");
             sendBroadcast(intent);
         }
 
@@ -272,7 +289,6 @@ public class DataService extends Service {
 
         public String trim_gdanska(String tmp) {
             tmp = tmp.trim();
-            Log.d("trim",tmp);
             tmp = tmp.substring(7, 40);
             return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }

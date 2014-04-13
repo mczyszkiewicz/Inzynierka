@@ -51,6 +51,11 @@
     <string name="tab_szosa">Najblizsza tablica to Szosa</string>
     <string name="tab_eskadrowa">Najblizsza tablica to Eskadrowa</string>
     <string name="tab_stuga">najblizsza tablica to Struga</string>
+    <string name="buttons">buttons</string>
+    <string name="Pobieranie_danych">Trwa pobieranie danych</string>
+    <string name="Informacja">Infromacja</string>
+    <string name="obrobka_danych">Obróbka danych</string>
+    <string name="check">check</string>
 
     <array name="trasy">
         <item>Brama Portowa</item>

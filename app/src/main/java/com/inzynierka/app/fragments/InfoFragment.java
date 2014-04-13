@@ -9,22 +9,24 @@ import android.widget.Button;
 
 import com.inzynierka.app.R;
 
-public class AlertFragment extends DialogFragment {
+/*
+ * Created by Mateusz Czyszkiewicz on 2014-04-13.
+ */
+public class InfoFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        getDialog().setTitle(getString(R.string.Informacja));
-        View v = inflater.inflate(R.layout.alertfragment,container,false);
+        View v = inflater.inflate(R.layout.infofragment,container,false);
         Button button = (Button)v.findViewById(R.id.button);
 
+        getDialog().setTitle(getString(R.string.obrobka_danych));
+        getDialog().setCanceledOnTouchOutside(true);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDialog().dismiss();
+
             }
         });
-
         return v;
     }
 }

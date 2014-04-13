@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.inzynierka.app.R;
+import com.inzynierka.app.fragments.InfoFragment;
 import com.inzynierka.app.fragments.ShowFragment;
 import com.inzynierka.app.services.DataService;
 
@@ -33,6 +34,8 @@ public class TrasyActivity extends FragmentActivity {
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private TextView textView;
+    private boolean check = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,40 +61,53 @@ public class TrasyActivity extends FragmentActivity {
         ArrayAdapter<?> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.trasy));
         listView.setAdapter(adapter);
 
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                String s = (String) listView.getItemAtPosition(i);
-                int p = (int) listView.getItemIdAtPosition(i);
-                Bundle bundle = new Bundle();
-                bundle.putString(getString(R.string.position), s);
-                String tmp_brama = time_brama_portowa(brama_portowa_text);
-                czas_brama_portowa = parsing_brama_portowa(tmp_brama);
-                bundle.putString(getString(R.string.brama), brama_portowa_text);
-                bundle.putString(getString(R.string.eskadrowa), eskadrowa_text);
-                bundle.putString(getString(R.string.struga), struga_text);
-                bundle.putString(getString(R.string.gdanska), gdanska_txt);
-                bundle.putString(getString(R.string.szosa), szosa_txt);
-                bundle.putInt(getString(R.string.eskadrowa_most),time_eskadrowa_most(eskadrowa_text));
-                bundle.putInt(getString(R.string.eskadrowa_trasa), time_eskadrowa_trasa(eskadrowa_text));
-                bundle.putInt(getString(R.string.struga_os_reda), time_os_reda(struga_text));
-                bundle.putInt(getString(R.string.struga_most_dlugi), time_struga_most_dlugi(struga_text));
-                bundle.putInt(getString(R.string.struga_trasa_zamkowa), time_struga_trasa_zamkowa(struga_text));
-                bundle.putInt(getString(R.string.time_brama_portowa), czas_brama_portowa);
-                bundle.putInt(getString(R.string.gdanska_most), time_gdanska_most(gdanska_txt));
-                bundle.putInt(getString(R.string.szosa_reda), time_szosa_os_reda(szosa_txt));
-                bundle.putInt(getString(R.string.szosa_most), time_szosa_most_dlugi(szosa_txt));
-                bundle.putInt(getString(R.string.szosa_trasa), time_szosa_trasa_zamkowa(szosa_txt));
-                bundle.putInt(getString(R.string.place), p);
+
                 FragmentManager fm = getSupportFragmentManager();
-                ShowFragment showFragment = new ShowFragment();
-                showFragment.setArguments(bundle);
-                showFragment.show(fm,"yup");
+                if(!check)
+                {
+                    InfoFragment info = new InfoFragment();
+                    info.show(fm,"info");
+                }
+                else {
+                    String s = (String) listView.getItemAtPosition(i);
+                    int p = (int) listView.getItemIdAtPosition(i);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(getString(R.string.position), s);
+                    String tmp_brama = time_brama_portowa(brama_portowa_text);
+                    czas_brama_portowa = parsing_brama_portowa(tmp_brama);
+                    bundle.putString(getString(R.string.brama), brama_portowa_text);
+                    bundle.putString(getString(R.string.eskadrowa), eskadrowa_text);
+                    bundle.putString(getString(R.string.struga), struga_text);
+                    bundle.putString(getString(R.string.gdanska), gdanska_txt);
+                    bundle.putString(getString(R.string.szosa), szosa_txt);
+                    bundle.putInt(getString(R.string.eskadrowa_most), time_eskadrowa_most(eskadrowa_text));
+                    bundle.putInt(getString(R.string.eskadrowa_trasa), time_eskadrowa_trasa(eskadrowa_text));
+                    bundle.putInt(getString(R.string.struga_os_reda), time_os_reda(struga_text));
+                    bundle.putInt(getString(R.string.struga_most_dlugi), time_struga_most_dlugi(struga_text));
+                    bundle.putInt(getString(R.string.struga_trasa_zamkowa), time_struga_trasa_zamkowa(struga_text));
+                    bundle.putInt(getString(R.string.time_brama_portowa), czas_brama_portowa);
+                    bundle.putInt(getString(R.string.gdanska_most), time_gdanska_most(gdanska_txt));
+                    bundle.putInt(getString(R.string.szosa_reda), time_szosa_os_reda(szosa_txt));
+                    bundle.putInt(getString(R.string.szosa_most), time_szosa_most_dlugi(szosa_txt));
+                    bundle.putInt(getString(R.string.szosa_trasa), time_szosa_trasa_zamkowa(szosa_txt));
+                    bundle.putInt(getString(R.string.place), p);
+
+                    ShowFragment showFragment = new ShowFragment();
+                    showFragment.setArguments(bundle);
+                    showFragment.show(fm, "yup");
+                }
             }
         });
 
     }
+
+
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
@@ -101,6 +117,8 @@ public class TrasyActivity extends FragmentActivity {
             gdanska_txt = intent.getStringExtra(getString(R.string.gdanska));
             struga_text = intent.getStringExtra(getString(R.string.struga));
             szosa_txt = intent.getStringExtra(getString(R.string.szosa));
+            check = intent.getBooleanExtra(getString(R.string.check),true);
+
         }
     };
 
