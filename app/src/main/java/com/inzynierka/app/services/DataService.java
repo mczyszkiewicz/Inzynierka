@@ -254,7 +254,7 @@ public class DataService extends Service {
                         if (lines == 79) {
                             tmp_szosa_txt = input;
                         }
-                        if (lines == 197) {
+                        if (lines == 196) {
                             tmp_gdanska_txt = input;
                         }
 
@@ -289,6 +289,7 @@ public class DataService extends Service {
 
         public String trim_gdanska(String tmp) {
             tmp = tmp.trim();
+            Log.d("appka",tmp);
             tmp = tmp.substring(7, 40);
             return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }
