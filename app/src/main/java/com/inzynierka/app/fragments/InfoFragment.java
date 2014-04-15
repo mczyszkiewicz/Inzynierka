@@ -24,7 +24,7 @@ public class InfoFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            getDialog().dismiss();
             }
         });
         return v;

@@ -191,7 +191,7 @@ public class DataService extends Service {
                 first = true;
                 intent.putExtra("check",true);
                       }
-            Log.d("appka","appka");
+
             sendBroadcast(intent);
         }
 
@@ -220,6 +220,8 @@ public class DataService extends Service {
         private void print_content(HttpsURLConnection con) {
             if (con != null) {
 
+                boolean eskadrowa = true;
+                boolean szosa = true;
 
                 try {
 
@@ -234,6 +236,7 @@ public class DataService extends Service {
                     Pattern pattern2 = Pattern.compile(getString(R.string.pattern3));
 
 
+
                     while ((input = br.readLine()) != null) {
 
                         lines++;
@@ -242,20 +245,44 @@ public class DataService extends Service {
                         Matcher matcher_eskadrowa = pattern1.matcher(input);
                         Matcher matcher_szosa_stargardzka = pattern2.matcher(input);
 
+
                         if (matcher_brama.find()) {
-                            tmp_brama_portowa_text = input;
+                         tmp_brama_portowa_text = input;
                         }
                         if (matcher_eskadrowa.find()) {
-                            tmp_eskadrowa_text = input;
+                           if(eskadrowa)
+                            {
+                                tmp_eskadrowa_text = input;
+                                eskadrowa = false;
+                            }
+
+                        }
+                        if(matcher_eskadrowa.find())
+                        {
+                            if(!eskadrowa)
+                            {
+
+                                tmp_gdanska_txt = input;
+                            }
                         }
                         if (matcher_szosa_stargardzka.find()) {
-                            tmp_struga_text = input;
+                            if(szosa)
+                            {
+                                tmp_szosa_txt = input;
+                                szosa = false;
+                            }
+                            else
+                            {
+                                tmp_struga_text = input;
+                            }
                         }
-                        if (lines == 79) {
-                            tmp_szosa_txt = input;
-                        }
-                        if (lines == 196) {
+                      //  if (lines == 79) {
+                    //        tmp_szosa_txt = input;
+                    //    }
+                       if (lines == 196) {
                             tmp_gdanska_txt = input;
+                           Log.d("gdanska", tmp_gdanska_txt);
+
                         }
 
                     }
@@ -282,14 +309,12 @@ public class DataService extends Service {
 
         public String trim_struga(String tmp) {
             tmp = tmp.substring(27, 95);
-
             return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }
 
 
         public String trim_gdanska(String tmp) {
             tmp = tmp.trim();
-            Log.d("appka",tmp);
             tmp = tmp.substring(7, 40);
             return tmp.replace((getString(R.string.dlugi)), getString(R.string.Długi));
         }
