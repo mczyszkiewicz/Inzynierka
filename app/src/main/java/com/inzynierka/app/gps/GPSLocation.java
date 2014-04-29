@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.inzynierka.app.R;
@@ -33,13 +34,15 @@ public class GPSLocation extends Service implements LocationListener {
 
     public Location getLocation() {
         try {
-            locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
 
+            locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
             boolean isGPSenabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean isINTERNETenabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
             if (!isGPSenabled && !isINTERNETenabled) {
                 this.canGetLocation = true;
                 {
+
                     if (isINTERNETenabled) {
                         locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 
@@ -99,6 +102,8 @@ public class GPSLocation extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("appka", "a" + longitude + latitude);
+        Toast.makeText(context,"a"+longitude + latitude,Toast.LENGTH_SHORT).show();
    }
 
     @Override
@@ -109,12 +114,14 @@ public class GPSLocation extends Service implements LocationListener {
     @Override
     public void onProviderEnabled(String s) {
 
-        Toast.makeText(context,"jest gps",Toast.LENGTH_SHORT).show();
+        Log.d("appka","jest");
+
           }
 
     @Override
     public void onProviderDisabled(String s) {
 
+        Log.d("appka"," nie jest");
           }
 
     @Override

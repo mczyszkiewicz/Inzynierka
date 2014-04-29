@@ -1,6 +1,8 @@
 package com.inzynierka.app.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +19,22 @@ public class AlertFragment extends DialogFragment {
         getDialog().setTitle(getString(R.string.Informacja));
         View v = inflater.inflate(R.layout.alertfragment,container,false);
         Button button = (Button)v.findViewById(R.id.button);
+        Button button2 = (Button)v.findViewById(R.id.button2);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getDialog().dismiss();
             }
         });
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+            }
+        });
         return v;
     }
 }

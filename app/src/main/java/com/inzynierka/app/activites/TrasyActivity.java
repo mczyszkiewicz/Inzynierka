@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.inzynierka.app.R;
 import com.inzynierka.app.fragments.InfoFragment;
 import com.inzynierka.app.fragments.ShowFragment;
+import com.inzynierka.app.gps.GPSLocation;
 import com.inzynierka.app.services.DataService;
 
 import java.util.Calendar;
@@ -35,7 +37,8 @@ public class TrasyActivity extends FragmentActivity {
     private PendingIntent pendingIntent;
     private TextView textView;
     private boolean check = false;
-
+    private GPSLocation gps;
+    private boolean inter = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,10 @@ public class TrasyActivity extends FragmentActivity {
         setContentView(R.layout.activity_trasy);
         Calendar cal = Calendar.getInstance();
         Intent i = new Intent(this, DataService.class);
+       LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        gps = new GPSLocation(this);
+        inter = gps.canGetLocation();
+
         pendingIntent = PendingIntent.getService(this,0,i,0);
         alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),30*1000,pendingIntent);
@@ -106,7 +113,6 @@ public class TrasyActivity extends FragmentActivity {
         });
 
     }
-
 
 
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {

@@ -9,7 +9,7 @@
     <string name="main_title">Wizualizacja ruchu drogowego w Szczecinie</string>
     <string name="lista_tras">Lista tras</string>
     <string name="o_aplikacji">About</string>
-    <string name="dzialanie">Aby aplikacja mogla dzialac poprawnie potrzebne jest polaczenie z internetem</string>
+    <string name="dzialanie">Aby aplikacja mogla dzialac poprawnie potrzebne jest polaczenie z internetem. Czy chcesz przejsc do ustawien Internetu?</string>
     <string name="OK">OK</string>
     <string name="refresh">Refresh</string>
     <string name="info_o_aplikacji"> UWAGA ! Ta aplikacja została stworzona na potrzeby pracy inżynierskiej. Nie jest to oficjalna aplikacja Zarządu Dróg i Transportu w Szczecinie. Dane wykorzystane w tym programie pochodzą z serwisu https://szr.szczecin.pl, które są ogólnodostepne. Nie zalecane jest używanie telefonu przez kierowcę w czasie prowadzenia auta</string>
@@ -45,10 +45,10 @@
     <string name="MyLocation">MyLocation</string>
     <string name="Location_update">LOCATION_UPDATE</string>
     <string name="message">message</string>
-    <string name="tab_gdanska">Najblizsza tablica to gdanska</string>
+    <string name="tab_gdanska">Najblizsza tablica to Gdanska</string>
     <string name="none" />
-    <string name="tab_brama">najblizsza tablica to brama portowa</string>
-    <string name="tab_szosa">Najblizsza tablica to Szosa</string>
+    <string name="tab_brama">najblizsza tablica to Brama Portowa</string>
+    <string name="tab_szosa">Najblizsza tablica to Szosa Stargardzka</string>
     <string name="tab_eskadrowa">Najblizsza tablica to Eskadrowa</string>
     <string name="tab_stuga">najblizsza tablica to Struga</string>
     <string name="buttons">buttons</string>
@@ -56,6 +56,9 @@
     <string name="Informacja">Infromacja</string>
     <string name="obrobka_danych">Obróbka danych</string>
     <string name="check">check</string>
+    <string name="ustawienia">Przejdź do ustawień</string>
+    <string name="nie">Nie,dziękuję</string>
+    <string name="pattern_eskadrowa"><![CDATA[<value>MOST]]></string>
 
     <array name="trasy">
         <item>Brama Portowa</item>

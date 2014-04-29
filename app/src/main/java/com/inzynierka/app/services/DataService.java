@@ -4,14 +4,11 @@ package com.inzynierka.app.services;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.inzynierka.app.R;
-import com.inzynierka.app.gps.GPSLocation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,16 +42,16 @@ public class DataService extends Service {
     private static final double eskadrowa_longitude = 53.3897;
     private static final double eskadrowa_latitude = 14.62139;
     private static boolean first = false;
-    GPSLocation gps;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        gps = new GPSLocation(DataService.this);
+
+
     }
 
 
-    LocationManager locationManager;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -64,7 +61,8 @@ public class DataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         new GetData().execute();
-        LocationCreator(gps.getLatitude(),gps.getLongitude());
+
+
         return START_STICKY;
     }
 
@@ -136,6 +134,7 @@ public class DataService extends Service {
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
+
 
             try {
                 URL url = new URL(https_url);
@@ -220,51 +219,47 @@ public class DataService extends Service {
         private void print_content(HttpsURLConnection con) {
             if (con != null) {
 
-                boolean eskadrowa = true;
+
                 boolean szosa = true;
+                boolean eskadrowa = true;
 
                 try {
-
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
                     String input;
-                    int lines = 0;
 
                     Pattern pattern = Pattern.compile(getString(R.string.pattern1));
-                    Pattern pattern1 = Pattern.compile(getString(R.string.pattern2));
+                    Pattern pattern1 = Pattern.compile(getString(R.string.pattern_eskadrowa));
                     Pattern pattern2 = Pattern.compile(getString(R.string.pattern3));
-
 
 
                     while ((input = br.readLine()) != null) {
 
-                        lines++;
 
                         Matcher matcher_brama = pattern.matcher(input);
                         Matcher matcher_eskadrowa = pattern1.matcher(input);
                         Matcher matcher_szosa_stargardzka = pattern2.matcher(input);
 
-
                         if (matcher_brama.find()) {
                          tmp_brama_portowa_text = input;
                         }
+
                         if (matcher_eskadrowa.find()) {
-                           if(eskadrowa)
+
+                            if(eskadrowa)
                             {
                                 tmp_eskadrowa_text = input;
                                 eskadrowa = false;
                             }
-
-                        }
-                        if(matcher_eskadrowa.find())
-                        {
-                            if(!eskadrowa)
+                            else
                             {
-
                                 tmp_gdanska_txt = input;
                             }
+
+
                         }
+
                         if (matcher_szosa_stargardzka.find()) {
                             if(szosa)
                             {
@@ -275,14 +270,6 @@ public class DataService extends Service {
                             {
                                 tmp_struga_text = input;
                             }
-                        }
-                      //  if (lines == 79) {
-                    //        tmp_szosa_txt = input;
-                    //    }
-                       if (lines == 196) {
-                            tmp_gdanska_txt = input;
-                           Log.d("gdanska", tmp_gdanska_txt);
-
                         }
 
                     }
